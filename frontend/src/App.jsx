@@ -10,6 +10,10 @@ import Register from "./Pages/Register";
 import Login from "./Pages/Login";
 import UserProfile from "./Pages/UserProfile";
 import EditProfile from "./Pages/EditProfile";
+import Dashboard from "./Pages/Dashboard/Dashboard";
+import AdminPanel from "./Pages/Dashboard/AdminPanel";
+import UsersPanel from "./Pages/Dashboard/UsersPanel";
+import EditorPanel from "./Pages/Dashboard/EditorPanel";
 
 const App = () => {
   return (
@@ -24,6 +28,16 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/dashboard/*" element={<Dashboard />} />
+        <Route
+          path="*"
+          element={
+            <h2 className="text-center mt-20 text-gray-500">Page not found</h2>
+          }
+        />
+        <Route path="/dashboard/admin" element={<AdminPanel />} />
+        <Route path="/dashboard/users" element={<UsersPanel />} />
+        <Route path="/dashboard/editor" element={<EditorPanel />} />
       </Routes>
       <Footer />
     </div>
