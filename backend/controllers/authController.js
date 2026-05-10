@@ -21,7 +21,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
-  const { username, email, password, avatar } = req.body;
+  const { username, email, password, avatar, role } = req.body;
 
   try {
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
@@ -36,6 +36,7 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
       username,
       avatar,
+      role: role || "user",
     });
 
     // Create user response object
@@ -46,6 +47,7 @@ export const registerUser = async (req, res) => {
       avatar: newUser.avatar,
       createdAt: newUser.createdAt,
       updatedAt: newUser.updatedAt,
+      role: newUser.role,
     };
 
     res
@@ -82,7 +84,7 @@ export const loginUser = async (req, res) => {
 
         username: user.username,
         avatar: user.avatar,
-        isAdmin: false,
+        role: user.role, // replace isAdmin: false with this
       },
       process.env.JWT_SECRET_KEY,
       { expiresIn: age },
@@ -96,6 +98,7 @@ export const loginUser = async (req, res) => {
       avatar: user.avatar, // This will be null if no avatar
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
+      role: user.role,
     };
 
     res
