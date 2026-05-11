@@ -31,14 +31,9 @@ const recipeSchema = new Schema(
       type: String,
       default: "",
     },
-    // ingredients: [
-    //   {
-    //     ingredient: String,
-    //     measure: String,
-    //   },
-    // ],
     strIngredients: {
       type: String,
+      required: [true, "Ingredients are required"],
     },
     strTags: {
       type: String,
@@ -48,12 +43,16 @@ const recipeSchema = new Schema(
       type: String,
       default: "",
     },
+    createdBy: {
+      // ← ADD THIS FIELD
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {
     timestamps: true,
   },
 );
-
-// recipeSchema.index({ strMeal: "text", strCategory: "text", strArea: "text" });
 
 export default mongoose.model("Recipe", recipeSchema);
