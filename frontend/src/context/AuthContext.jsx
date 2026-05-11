@@ -11,8 +11,12 @@ export const AuthContextProvider = ({ children }) => {
 
   const updateUser = (data) => {
     setCurrentUser(data);
+    // ✅ IMPORTANT: Save token when it comes from login
     if (data?.token) {
       localStorage.setItem("token", data.token);
+    }
+    if (data?.user) {
+      localStorage.setItem("user", JSON.stringify(data.user));
     }
   };
 
@@ -24,12 +28,14 @@ export const AuthContextProvider = ({ children }) => {
     } finally {
       setCurrentUser(null);
       localStorage.removeItem("user");
-      localStorage.removeItem("token");
+      localStorage.removeItem("token"); // ✅ Clear token on logout
     }
   };
 
   useEffect(() => {
-    localStorage.setItem("user", JSON.stringify(currentUser));
+    if (currentUser) {
+      localStorage.setItem("user", JSON.stringify(currentUser));
+    }
   }, [currentUser]);
 
   return (
