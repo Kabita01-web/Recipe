@@ -10,13 +10,28 @@ export const AuthContextProvider = ({ children }) => {
   );
 
   const updateUser = (data) => {
-    setCurrentUser(data);
-    // ✅ IMPORTANT: Save token when it comes from login
+    console.log("UpdateUser received:", data);
+
+    let userData = data;
+    if (data?.user) {
+      userData = data.user;
+    }
+
+    if (userData) {
+      // Ensure both id and _id exist
+      if (userData.id && !userData._id) {
+        userData._id = userData.id;
+      }
+      if (userData._id && !userData.id) {
+        userData.id = userData._id;
+      }
+
+      localStorage.setItem("user", JSON.stringify(userData));
+      setCurrentUser(userData);
+    }
+
     if (data?.token) {
       localStorage.setItem("token", data.token);
-    }
-    if (data?.user) {
-      localStorage.setItem("user", JSON.stringify(data.user));
     }
   };
 

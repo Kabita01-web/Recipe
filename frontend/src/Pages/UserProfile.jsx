@@ -12,7 +12,15 @@ const UserProfile = () => {
     logout();
     navigate("/");
   };
-
+  <div className="pt-20 pb-6 text-center px-6">
+    <h2 className="text-2xl font-bold text-gray-800">
+      {currentUser?.username || currentUser?.name || "User"}
+    </h2>
+    <p className="text-gray-500 mt-1">{currentUser?.email || "No email"}</p>
+    <p className="text-xs text-gray-400 mt-1 capitalize">
+      Role: {currentUser?.role || "user"}
+    </p>
+  </div>;
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-gray-100 flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden">
@@ -41,13 +49,15 @@ const UserProfile = () => {
         {/* User Info */}
         <div className="pt-20 pb-6 text-center px-6">
           <h2 className="text-2xl font-bold text-gray-800">
-            {currentUser?.username || "John Doe"}
+            {currentUser?.username || currentUser?.name || "User"}
           </h2>
           <p className="text-gray-500 mt-1">
-            {currentUser?.email || "john.doe@example.com"}
+            {currentUser?.email || "No email"}
+          </p>
+          <p className="text-xs text-gray-400 mt-1 capitalize">
+            Role: {currentUser?.role || "user"}
           </p>
         </div>
-
         {/* Actions */}
         <div className="px-6 flex gap-4">
           <Link

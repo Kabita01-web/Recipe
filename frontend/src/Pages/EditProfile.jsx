@@ -27,13 +27,15 @@ const EditProfile = () => {
     setError("");
 
     try {
+      // Use currentUser.id or currentUser._id
+      const userId = currentUser?._id || currentUser?.id;
+
       const res = await apiRequest.put(
-        `/users/edit-profile/${currentUser._id}`,
+        `/users/edit-profile/${userId}`,
         formData,
       );
-      updateUser(res.data.data);
+      updateUser(res.data.data || res.data.user);
       navigate("/profile");
-      setError("");
     } catch (error) {
       setError(error.response?.data?.message || "Failed to update profile");
       console.log(error);

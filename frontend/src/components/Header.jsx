@@ -6,11 +6,15 @@ import Profile from "../assets/item1.webp";
 const Header = () => {
   const { currentUser } = useContext(AuthContext);
 
+  console.log("Header - Current user:", currentUser); // Debug
+
   return (
     <header className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
-        <h1 className="text-2xl font-bold text-orange-500">RecipeShare</h1>
+        <Link to="/" className="text-2xl font-bold text-orange-500">
+          RecipeShare
+        </Link>
 
         {/* Navigation */}
         <nav className="hidden md:flex space-x-6">
@@ -26,11 +30,12 @@ const Header = () => {
           <Link to="/contact" className="text-gray-700 hover:text-orange-500">
             Contact
           </Link>
-          {/* Show dashboard link for admin and editor */}
+
+          {/* Dashboard link for admin and editor */}
           {currentUser &&
             (currentUser.role === "admin" || currentUser.role === "editor") && (
               <Link
-                to="/dashboard"
+                to="/dashboard/admin"
                 className="text-purple-600 hover:text-purple-800 font-medium"
               >
                 Dashboard
@@ -38,23 +43,21 @@ const Header = () => {
             )}
         </nav>
 
-        {/* Auth Buttons */}
+        {/* Auth Buttons / User Menu */}
         <div className="flex items-center space-x-3">
           {currentUser ? (
             <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-2">
-                <img
-                  src={currentUser.avatar || Profile}
-                  alt={`${currentUser.username}'s profile`}
-                  className="w-8 h-8 rounded-full object-cover border border-gray-300"
-                />
-                <Link
-                  to="/profile"
-                  className="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200"
-                >
-                  {currentUser.username}
-                </Link>
-              </div>
+              <img
+                src={currentUser.avatar || Profile}
+                alt="Profile"
+                className="w-8 h-8 rounded-full object-cover border border-gray-300"
+              />
+              <Link
+                to="/profile"
+                className="text-gray-700 hover:text-orange-500 font-medium"
+              >
+                {currentUser.username || currentUser.email || "User"}
+              </Link>
             </div>
           ) : (
             <>
