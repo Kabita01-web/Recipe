@@ -15,7 +15,10 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "https://recipe-frontend-kpzi.onrender.com",
+    origin: [
+      "https://recipe-frontend-kpzi.onrender.com",
+      "http://localhost:5173",
+    ],
     credentials: true,
   }),
 );

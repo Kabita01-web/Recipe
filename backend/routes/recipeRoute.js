@@ -4,11 +4,12 @@ import {
   deleteRecipe,
   updateRecipe,
 } from "../controllers/recipeController.js";
+import { verifyEditor } from "../middleware/verifyToken.js";
 
 const router = express.Router();
 
-router.post("/create", createRecipe);
-router.delete("/delete/:id", deleteRecipe);
-router.put("/edit/:id", updateRecipe);
+router.post("/create", verifyEditor, createRecipe);
+router.delete("/delete/:id", verifyEditor, deleteRecipe);
+router.put("/edit/:id", verifyEditor, updateRecipe);
 
 export default router;
