@@ -8,6 +8,8 @@ import UsersPanel from "./UsersPanel";
 const Dashboard = () => {
   const { currentUser, logout } = useContext(AuthContext);
 
+  console.log("Current user in dashboard:", currentUser); // Debug
+
   if (!currentUser) return <Navigate to="/login" />;
 
   return (
@@ -20,6 +22,7 @@ const Dashboard = () => {
         </div>
 
         <nav className="flex flex-col gap-1 px-3">
+          {/* Admin only links */}
           {currentUser.role === "admin" && (
             <>
               <NavLink
@@ -49,6 +52,7 @@ const Dashboard = () => {
             </>
           )}
 
+          {/* Editor and Admin links */}
           {(currentUser.role === "editor" || currentUser.role === "admin") && (
             <NavLink
               to="/dashboard/editor"
@@ -68,7 +72,7 @@ const Dashboard = () => {
         {/* User info at bottom */}
         <div className="mt-auto px-5 pt-4 border-t border-gray-100">
           <p className="text-sm font-medium text-gray-800">
-            {currentUser.username}
+            {currentUser.username || currentUser.email}
           </p>
           <p className="text-xs text-gray-400 capitalize">{currentUser.role}</p>
           <button
@@ -93,11 +97,13 @@ const Dashboard = () => {
             <Route path="editor" element={<EditorPanel />} />
           )}
           <Route
-            path="*"
+            path="/"
             element={
-              <div className="text-gray-400 text-sm">
-                Select a section from the sidebar.
-              </div>
+              currentUser.role === "admin" ? (
+                <Navigate to="/dashboard/admin" />
+              ) : (
+                <Navigate to="/dashboard/editor" />
+              )
             }
           />
         </Routes>
