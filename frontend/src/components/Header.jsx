@@ -26,6 +26,16 @@ const Header = () => {
           <Link to="/contact" className="text-gray-700 hover:text-orange-500">
             Contact
           </Link>
+          {/* Show dashboard link for admin and editor */}
+          {currentUser &&
+            (currentUser.role === "admin" || currentUser.role === "editor") && (
+              <Link
+                to="/dashboard"
+                className="text-purple-600 hover:text-purple-800 font-medium"
+              >
+                Dashboard
+              </Link>
+            )}
         </nav>
 
         {/* Auth Buttons */}
@@ -54,7 +64,6 @@ const Header = () => {
               >
                 Register
               </Link>
-
               <Link
                 to="/login"
                 className="bg-gray-500 text-white px-4 py-2 rounded-xl hover:bg-gray-600 transition"
