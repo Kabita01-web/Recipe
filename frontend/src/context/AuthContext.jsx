@@ -5,18 +5,17 @@ import { apiRequest } from "../services/api";
 export const AuthContext = createContext(null);
 
 export const AuthContextProvider = ({ children }) => {
-  //to get the current user from local storage
   const [currentUser, setCurrentUser] = useState(
     JSON.parse(localStorage.getItem("user")) || null,
   );
 
-  // to update the user
   const updateUser = (data) => {
-    5;
     setCurrentUser(data);
+    if (data?.token) {
+      localStorage.setItem("token", data.token);
+    }
   };
 
-  // logout function
   const logout = async () => {
     try {
       await apiRequest.post("/auth/logout");
@@ -25,6 +24,7 @@ export const AuthContextProvider = ({ children }) => {
     } finally {
       setCurrentUser(null);
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
     }
   };
 
