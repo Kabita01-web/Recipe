@@ -101,14 +101,12 @@ export const loginUser = async (req, res) => {
       role: user.role,
     };
 
-    res
-      .cookie("token", token, {
-        httpOnly: true,
-        // secure: true, // uncomment in production with HTTPS
-        maxAge: age,
-      })
-      .status(200)
-      .json(userInfo);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: age,
+    });
   } catch (error) {
     res.status(500).json({ msg: "Internal server error" });
     console.error(error);
