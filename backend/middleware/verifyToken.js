@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 export const verifyToken = async (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
 
   if (!token) {
     return res
@@ -14,7 +14,7 @@ export const verifyToken = async (req, res, next) => {
       return res.status(403).json({ message: "Invalid token" });
     }
     req.userId = payload.id;
-    req.userRole = payload.role; // ADD THIS
+    req.userRole = payload.role;
     next();
   });
 };
@@ -28,8 +28,6 @@ export const verifyTokenAndAuthorization = async (req, res, next) => {
     }
   });
 };
-
-// ADD THESE 👇
 
 export const verifyAdmin = (req, res, next) => {
   verifyToken(req, res, () => {

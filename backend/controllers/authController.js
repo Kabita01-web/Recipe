@@ -39,7 +39,6 @@ export const registerUser = async (req, res) => {
       role: role || "user",
     });
 
-    // Create user response object
     const userResponse = {
       _id: newUser._id,
       username: newUser.username,
@@ -63,49 +62,38 @@ export const loginUser = async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Check if user exists
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(401).json({ msg: "Invalid credentials" });
     }
 
-    // Check if the user's password is correct
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ msg: "Invalid credentials" });
     }
 
-    // Generate JWT token
-    const age = 1000 * 60 * 60 * 24 * 7; // 1 week
+    const age = 1000 * 60 * 60 * 24 * 7;
 
     const token = jwt.sign(
       {
         id: user._id,
-
         username: user.username,
         avatar: user.avatar,
-        role: user.role, // replace isAdmin: false with this
+        role: user.role,
       },
       process.env.JWT_SECRET_KEY,
       { expiresIn: age },
     );
 
-    // Create user info object
-    const userInfo = {
+    res.status(200).json({
       _id: user._id,
       username: user.username,
       email: user.email,
-      avatar: user.avatar, // This will be null if no avatar
+      avatar: user.avatar,
+      role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
-      role: user.role,
-    };
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: age,
+      token: token,
     });
   } catch (error) {
     res.status(500).json({ msg: "Internal server error" });
@@ -113,7 +101,6 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// Logout user
 export const logoutUser = (req, res) => {
-  res.clearCookie("token").status(200).json({ msg: "Logged out successfully" });
+  res.status(200).json({ msg: "Logged out successfully" });
 };
