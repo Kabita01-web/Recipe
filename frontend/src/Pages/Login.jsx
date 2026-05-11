@@ -5,7 +5,7 @@ import { useContext } from "react";
 import { apiRequest } from "../services/api";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState(""); // ✅ Changed from username to email
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -18,15 +18,31 @@ const Login = () => {
     setError("");
 
     try {
-      const res = await apiRequest.post("/auth/login/", {
-        username,
+      const res = await apiRequest.post("/auth/login", {
+        // ✅ Removed trailing slash
+        email, // ✅ Send email, not username
         password,
       });
+
+      console.log("Login response:", res.data); // Debug: See what's returned
+
       updateUser(res.data);
-      navigate("/");
+
+      // ✅ Redirect based on role
+      if (res.data.user?.role === "admin") {
+        navigate("/dashboard/admin");
+      } else if (res.data.user?.role === "editor") {
+        navigate("/dashboard/editor");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
-      setError(error.response?.data?.msg || "Something went wrong");
-      console.log(error);
+      console.error("Login error:", error);
+      setError(
+        error.response?.data?.message ||
+          error.response?.data?.msg ||
+          "Something went wrong",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -46,12 +62,12 @@ const Login = () => {
         )}
 
         <input
-          type="text"
-          id="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Email"
-          className="w-full mb-4 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          type="email" // ✅ Changed from text to email
+          id="email" // ✅ Changed from username to email
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email" // ✅ Changed to "Email"
+          className="w-full mb-4 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
           required
         />
 
@@ -61,7 +77,7 @@ const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
-          className="w-full mb-6 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full mb-6 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
           required
         />
 
@@ -72,7 +88,7 @@ const Login = () => {
             isLoading ? "opacity-70 cursor-not-allowed" : ""
           }`}
         >
-          {isLoading ? "Login in...." : "Sign In"}
+          {isLoading ? "Logging in..." : "Sign In"}
         </button>
 
         <p className="text-sm text-center mt-4">
