@@ -59,48 +59,45 @@ export const registerUser = async (req, res) => {
 };
 
 export const loginUser = async (req, res) => {
-  const { username, password } = req.body;
-
   try {
-    const user = await User.findOne({ username });
+    const { email, password } = req.body;
+
+    // Find user
+    const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ msg: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ msg: "Invalid credentials" });
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const age = 1000 * 60 * 60 * 24 * 7;
-
+    // ✅ GENERATE TOKEN
     const token = jwt.sign(
       {
         id: user._id,
-        username: user.username,
-        avatar: user.avatar,
         role: user.role,
       },
       process.env.JWT_SECRET_KEY,
-      { expiresIn: age },
+      { expiresIn: "7d" },
     );
 
-    res.status(200).json({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      avatar: user.avatar,
-      role: user.role,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-      token: token,
+    // ✅ SEND BOTH TOKEN AND USER
+    res.json({
+      token, // ← CRITICAL: Frontend needs this
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
-    res.status(500).json({ msg: "Internal server error" });
-    console.error(error);
+    res.status(500).json({ message: error.message });
   }
 };
-
 export const logoutUser = (req, res) => {
   res.status(200).json({ msg: "Logged out successfully" });
 };
