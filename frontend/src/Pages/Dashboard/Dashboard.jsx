@@ -8,9 +8,13 @@ import UsersPanel from "./UsersPanel";
 const Dashboard = () => {
   const { currentUser, logout } = useContext(AuthContext);
 
-  console.log("Current user in dashboard:", currentUser); // Debug
+  console.log("Current user in dashboard:", currentUser);
 
   if (!currentUser) return <Navigate to="/login" />;
+
+  // Get role safely
+  const userRole = currentUser.role || "user";
+  console.log("User role:", userRole);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -23,7 +27,7 @@ const Dashboard = () => {
 
         <nav className="flex flex-col gap-1 px-3">
           {/* Admin only links */}
-          {currentUser.role === "admin" && (
+          {userRole === "admin" && (
             <>
               <NavLink
                 to="/dashboard/admin"
@@ -53,7 +57,7 @@ const Dashboard = () => {
           )}
 
           {/* Editor and Admin links */}
-          {(currentUser.role === "editor" || currentUser.role === "admin") && (
+          {(userRole === "editor" || userRole === "admin") && (
             <NavLink
               to="/dashboard/editor"
               className={({ isActive }) =>
@@ -67,14 +71,21 @@ const Dashboard = () => {
               ✏️ Add recipes
             </NavLink>
           )}
+
+          {/* If no role matches, show message */}
+          {userRole !== "admin" && userRole !== "editor" && (
+            <div className="px-3 py-2 text-sm text-gray-400">
+              Regular user view (no admin access)
+            </div>
+          )}
         </nav>
 
         {/* User info at bottom */}
         <div className="mt-auto px-5 pt-4 border-t border-gray-100">
           <p className="text-sm font-medium text-gray-800">
-            {currentUser.username || currentUser.email}
+            {currentUser.username || currentUser.email || "User"}
           </p>
-          <p className="text-xs text-gray-400 capitalize">{currentUser.role}</p>
+          <p className="text-xs text-gray-400 capitalize">{userRole}</p>
           <button
             onClick={logout}
             className="mt-3 text-xs text-red-500 hover:underline"
@@ -87,22 +98,29 @@ const Dashboard = () => {
       {/* Main content */}
       <div className="flex-1 p-6">
         <Routes>
-          {currentUser.role === "admin" && (
+          {userRole === "admin" && (
             <>
               <Route path="admin" element={<AdminPanel />} />
               <Route path="users" element={<UsersPanel />} />
             </>
           )}
-          {(currentUser.role === "editor" || currentUser.role === "admin") && (
+          {(userRole === "editor" || userRole === "admin") && (
             <Route path="editor" element={<EditorPanel />} />
           )}
           <Route
             path="/"
             element={
-              currentUser.role === "admin" ? (
+              userRole === "admin" ? (
                 <Navigate to="/dashboard/admin" />
-              ) : (
+              ) : userRole === "editor" ? (
                 <Navigate to="/dashboard/editor" />
+              ) : (
+                <div className="text-center text-gray-500 py-10">
+                  <p>Welcome to your dashboard!</p>
+                  <p className="text-sm mt-2">
+                    You don't have admin or editor privileges.
+                  </p>
+                </div>
               )
             }
           />
